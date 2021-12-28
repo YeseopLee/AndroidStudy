@@ -2,7 +2,7 @@ package com.seoplee.androidstudy.data.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.seoplee.androidstudy.data.entity.UserEntity
+import com.seoplee.androidstudy.data.entity.user.UserEntity
 import com.seoplee.androidstudy.data.room.dao.UserDao
 
 @Database(
