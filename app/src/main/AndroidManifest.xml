@@ -10,7 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidStudy">
         <activity
-            android:name=".MainActivity"
+            android:name=".screen.main.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screen.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

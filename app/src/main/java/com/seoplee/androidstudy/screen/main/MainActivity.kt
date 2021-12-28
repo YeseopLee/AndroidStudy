@@ -1,7 +1,8 @@
-package com.seoplee.androidstudy
+package com.seoplee.androidstudy.screen.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.seoplee.androidstudy.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
