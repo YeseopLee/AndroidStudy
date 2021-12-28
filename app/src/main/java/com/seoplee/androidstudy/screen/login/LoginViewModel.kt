@@ -1,6 +1,5 @@
 package com.seoplee.androidstudy.screen.login
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.seoplee.androidstudy.data.entity.user.UserEntity
@@ -38,7 +37,6 @@ class LoginViewModel : ViewModel() {
             if(userRepository.checkPassword(userId.value!!, userPassword.value!!)) {
                 loginState.value = LoginState.Success(
                     UserEntity(
-                        id = hashCode().toLong(),
                         userId = userId.value!!,
                         userPassword = userPassword.value!!
                     ))

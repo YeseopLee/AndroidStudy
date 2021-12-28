@@ -3,8 +3,6 @@ package com.seoplee.androidstudy.screen.login
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.seoplee.androidstudy.R
 import com.seoplee.androidstudy.databinding.ActivityLoginBinding
