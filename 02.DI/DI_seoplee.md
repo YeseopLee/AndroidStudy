@@ -6,6 +6,7 @@
 객체지향 프로그래밍에서 클래스간의 영향을 받을 때, 의존성이 존재한다라고 말할 수 있다.
 
 구글 문서에서는 의존성 주입을 다음과 같이 설명하고 있다.
+
 (https://developer.android.com/training/dependency-injection)
 
 ```kotlin
@@ -24,7 +25,9 @@ fun main(args: Array) {
 ![1](https://user-images.githubusercontent.com/67935576/149666380-f0d0ecfe-5db3-4b74-ad9a-11d9388becf6.png)
 
 위 코드에서 Car 클래스는 Engine클래스에 강하게 의존하고 있다.
+
 Car 클래스를 생성하려고 할 때 마다 Engine 클래스를 생성해서 사용하고 있기 때문에, 가스차, 전기차등 새로운 Car를 위해 새로운 Engine 클래스를 만들어서 사용해야 한다.
+
 또한 그렇게 만든 새로운 Engine에서 내부 정책등의 이유로 start()라는 메서드의 이름을 바꾸거나 삭제해야 한다면, Engine을 가지고 있는 모든 클래스에서 해당 부분을 수정해주어야 한다.
 
 ```kotlin
@@ -143,6 +146,7 @@ Hilt와 Koin의 대표적인 차이라고 하면, Hilt는 컴파일시에 의존
   주입부의 인스턴스를 제공(Provide)하는 역할을 한다.
 
 ![3](https://user-images.githubusercontent.com/67935576/149666384-5662ad76-c50f-42da-8a4c-04f3348ee2e0.png)
+
 (출처: https://kotlinworld.com/102?category=924584)
 
 #### Hilt
@@ -153,6 +157,7 @@ Hilt는 프로젝트의 모든 Android 클래스에 컨테이너를 제공하고
 Hilt에서는 내부적으로 Component들을 자동으로 생성하고, 생명주기에 따라 관리해준다.
 
 ![4](https://user-images.githubusercontent.com/67935576/149666545-e0f204ef-9779-4f70-8de5-a11f98a50a68.png)
+
 (Hilt의 Component들의 계층 구조)
 
 
