@@ -2,16 +2,22 @@ package com.seoplee.androidstudy.screen.login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.seoplee.androidstudy.R
 import com.seoplee.androidstudy.databinding.ActivityLoginBinding
 import com.seoplee.androidstudy.screen.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val viewModel = LoginViewModel()
+
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +26,6 @@ class LoginActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         observeData()
-
     }
 
     private fun observeData() {
@@ -30,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
                 is LoginState.NoPassword -> handleNoPassword()
                 is LoginState.AlreadyExist -> handleAlready()
                 is LoginState.PasswordError -> handlePasswordError()
-                is LoginState.Success -> handleSuccess()
+                is LoginState.Success -> handleSuccess(it)
                 else -> Unit
             }
         }
@@ -52,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, R.string.pwError, Toast.LENGTH_SHORT).show()
     }
 
-    private fun handleSuccess() {
+    private fun handleSuccess(state: LoginState.Success) {
         Toast.makeText(this, R.string.welcome, Toast.LENGTH_SHORT).show()
         startActivity(MainActivity.newIntent(this))
     }

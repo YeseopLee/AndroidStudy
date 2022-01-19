@@ -4,18 +4,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.seoplee.androidstudy.data.entity.user.UserEntity
 import com.seoplee.androidstudy.data.repository.user.DefaultUserRepository
+import com.seoplee.androidstudy.data.repository.user.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    private val userRepository by lazy {
-        DefaultUserRepository()
-    }
     val userId: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
+
     val userPassword: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
+
     val loginState : MutableLiveData<LoginState> by lazy {
         MutableLiveData<LoginState>(LoginState.Uninitialized)
     }
