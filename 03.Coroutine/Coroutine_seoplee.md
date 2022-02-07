@@ -151,5 +151,6 @@ I/System.out: [task1 done, task2 done]
 
 
 ### Ref
-https://developer.android.com/kotlin/coroutines?hl=ko
-https://kotlinworld.com/142?category=973476
+https://developer.android.com/kotlin/coroutines
+
+https://kotlinworld.com/141?category=973476
