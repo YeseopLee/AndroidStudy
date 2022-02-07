@@ -6,10 +6,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.seoplee.androidstudy.R
 import com.seoplee.androidstudy.databinding.ActivityLoginBinding
 import com.seoplee.androidstudy.screen.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,6 +28,9 @@ class LoginActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         observeData()
+
+        viewModel.suspendExample()
+
     }
 
     private fun observeData() {

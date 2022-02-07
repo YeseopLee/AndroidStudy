@@ -2,10 +2,13 @@ package com.seoplee.androidstudy.screen.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.seoplee.androidstudy.data.entity.user.UserEntity
 import com.seoplee.androidstudy.data.repository.user.DefaultUserRepository
 import com.seoplee.androidstudy.data.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,5 +65,31 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
             // 정규식 추가 가능
         }
         return true
+    }
+
+    fun suspendExample() = viewModelScope.launch {
+
+        val task1 : Deferred<String> = async {
+            var i = 0
+            while (i < 4) {
+                println(i)
+                delay(300)
+                i++
+            }
+            "task1 done"
+        }
+
+        val task2 : Deferred<String> = async {
+            var i = 0
+            while (i < 6) {
+                println(i)
+                delay(300)
+                i++
+            }
+            "task2 done"
+        }
+
+        val msg = awaitAll(task1, task2)
+        println(msg)
     }
 }
