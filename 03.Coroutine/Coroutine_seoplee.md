@@ -149,6 +149,34 @@ I/System.out: [task1 done, task2 done]
 ```
 여러 async를 같이 기다렸다가 결과값을 반환받아 사용할 수 있다.
 
+### Scope
+Scope는 코루틴 작업이 실행되는 블록을 의미한다. 
+스코프가 해제될 때, 속한 코루틴 작업들은 모두 해제된다. 
+때문에 코루틴 스코프를 제대로 관리하지 않으면 메모리 누수가 일어나므로 사용에 주의하여야 한다.
+대표적인 스코프들은 다음과 같다
+- CoroutineScope
+- GlobalScope
+- lifecycleScope
+- ViewModelScope
+
+#### CoroutineScope
+코루틴 라이브러리에서 기본적으로 제공하는 스코프.
+안드로이드의 activity가 종료되거나, 클래스의 인스턴스가 사라질 때 메모리에서 제거된다.
+
+#### GlobalScope
+앱이 종료되어야만 메모리에서 제거되는 스코프.
+activity가 종료되도 사라지지 않기때문에, 자칫 코루틴 작업이 중복 실행되어 이전의 작업에 대하여 제어권을 잃어 끝없이 메모리 누수가 일어나기 쉽다.
+싱글톤 객체로 존재한다.
+
+#### lifecycleScope
+Activity와 Fragment와 같이 LifecycleOwner의 구현체로, 생명주기를 가지는 컴포넌트에서 사용하는 스코프.
+생명주기와 함께하기 때문에 onDestroy될 때 메모리에서 제거되고 코루틴 작업이 취소된다.
+onDestroy에서 제거되는것이 기본이기 때문에, 홈 버튼등으로 앱을 백그라운드로 보낼 경우에는 작업이 취소되지 않으므로 주의하여야 한다.
+
+#### ViewModelScope
+viewModel에서 사용하는 스코프.
+바인딩 된 생명주기에 맞춰 코루틴 작업이 진행된다.
+
 
 ### Ref
 https://developer.android.com/kotlin/coroutines
