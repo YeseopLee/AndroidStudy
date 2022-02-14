@@ -26,15 +26,20 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private val adapter = PagingAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
+        initViews()
         observeData()
+    }
 
-        val adapter = PagingAdapter()
+    private fun initViews() {
+
         binding.recyclerView.adapter = adapter
 
         lifecycleScope.launch {
@@ -44,44 +49,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            // refresh
             adapter.refresh()
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-
-//        binding.recyclerView.withModels {
-//            val list = arrayOf(
-//                "고양이1" to "https://cdn2.thecatapi.com/images/YQKJJcqNZ.jpg",
-//                "고양이2" to "https://cdn2.thecatapi.com/images/p46ys1bGF.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//                "고양이3" to "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg",
-//            )
-//            list.forEachIndexed { index, (title, utl) ->
-//                itemviewholder {
-//                    id("item$index")
-//                    name(title)
-//                    epoxyid(utl)
-//                }
-//            }
-//        }
+        viewModel.testCoroutine()
     }
 
+    private fun observeData()  {
+        viewModel.mainStateLiveData.observe(this) {
+            when(it) {
+                is MainState.Uninitialized -> Unit
+                is MainState.Success -> handleSuccess(it)
+                is MainState.Error -> handleError(it)
+            }
+        }
+    }
 
-    private fun observeData() {}
+    private fun handleSuccess(state: MainState.Success) {
+        Log.i("SUCCESS",state.passengerInfo.toString())
+    }
+
+    private fun handleError(state: MainState.Error) {
+        Log.e("FAIL",state.code.toString())
+    }
 
     companion object {
         fun newIntent(context: Context) = Intent(context, MainActivity::class.java)

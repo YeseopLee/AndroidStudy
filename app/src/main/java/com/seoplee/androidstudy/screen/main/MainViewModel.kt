@@ -19,24 +19,22 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val passengerRepository: PassengerRepository,
 private val serverApi: ServerApi) : ViewModel() {
 
-    private val mainStateLiveData = MutableLiveData<MainState>(MainState.Uninitialized)
+    val mainStateLiveData = MutableLiveData<MainState>(MainState.Uninitialized)
+
+    fun testCoroutine() = viewModelScope.launch {
+        val response = passengerRepository.getPassengers()
+
+        if(response.status == NetworkResult.Status.SUCCESS) {
+            mainStateLiveData.value = MainState.Success(
+                passengerInfo = response.data!!
+            )
+        } else {
+            mainStateLiveData.value = MainState.Error(response.code)
+        }
+    }
 
     fun getPagingData() : Flow<PagingData<Data>> {
         return passengerRepository.getPagingData().cachedIn(viewModelScope)
     }
 
-
-    fun fetchData() = viewModelScope.launch {
-        val response = passengerRepository.getPassengers()
-
-//        val pagingData = passengerRepository.getPagingData().cachedIn(viewModelScope)
-
-        if(response.status == NetworkResult.Status.SUCCESS) {
-            Log.e("dataTest",response.data.toString())
-        } else {
-            Log.e("error","error")
-        }
-
-//        Log.e("pagingData", pagingData.collect().toString())
-    }
 }

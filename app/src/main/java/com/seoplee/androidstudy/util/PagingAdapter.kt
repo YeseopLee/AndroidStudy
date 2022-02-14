@@ -19,7 +19,6 @@ class PagingAdapter : PagingDataAdapter<Data, PagingViewHolder>(diffCallback) {
 
     override fun onBindViewHolder(holder: PagingViewHolder, position: Int) {
         val item = getItem(position)
-        Log.e("item is what", item.toString())
         if (item != null) {
             holder.bind(item)
         }

@@ -9,11 +9,11 @@ sealed class MainState{
     object Uninitialized: MainState()
 
     data class Success(
-        val passengerInfo: Data
+        val passengerInfo: Passenger
     ) : MainState()
 
-//    object NoId : MainState()
-//    object NoPassword : MainState()
-//    object AlreadyExist: MainState()
-//    object PasswordError : MainState()
+    data class Error(
+        val code : String?
+    ) : MainState()
+
 }
