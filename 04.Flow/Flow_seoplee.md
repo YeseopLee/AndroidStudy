@@ -18,6 +18,8 @@ Coroutine으로 만들어진, Kotlin에서 사용하는 비동기 데이터 스�
 
 Cold 스트림은 일반 동영상을, Hot 스트림은 실시간 방송을 보는것과 유사하다.
 
+일반적으로 기본 Flow는 Cold Stream이다.
+
 ### Flow 기본
 
 가장 기본적인 Flow의 사용방법은 다음과 같다.
