@@ -371,12 +371,10 @@ launchIn은 별도로 지정한 스코프에서 컬렉션을 시작하기 때문
 예를 들어,
 
 ```kotlin
-lifecycleScope.launch {
-    signInButton.clicks()
-        .onEach { viewModel.signIn() }
-        .collect()
-    doSomeThing()
-}
+signInButton.clicks()
+    .onEach { viewModel.signIn() }
+    .collect()
+doSomeThing()
 ```
 
 이 경우에는 하나의 scope에서 컬렉션을 하기 때문에, collect가 끝날때까지 doSomeThing()을 실행하지 못한다.
@@ -386,7 +384,7 @@ lifecycleScope.launch {
 signInButton.clicks()
     .onEach { viewModel.signIn() }
     .launchIn(lifecycleScope)
-    doSomeThing()
+doSomeThing()
 ```
 
 그러나 이 경우에는 별도의 scope를 이용하여 컬렉션을 하므로, doSomeThing()을 바로 실행할 수 있다.
