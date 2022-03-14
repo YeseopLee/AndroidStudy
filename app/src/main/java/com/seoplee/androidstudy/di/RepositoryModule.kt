@@ -1,7 +1,7 @@
 package com.seoplee.androidstudy.di
 
-import com.seoplee.androidstudy.data.repository.passenger.DefaultPassengerRepository
-import com.seoplee.androidstudy.data.repository.passenger.PassengerRepository
+import com.seoplee.androidstudy.data.repository.todo.DefaultTodoRepository
+import com.seoplee.androidstudy.data.repository.todo.TodoRepository
 import com.seoplee.androidstudy.data.repository.user.DefaultUserRepository
 import com.seoplee.androidstudy.data.repository.user.UserRepository
 import dagger.Binds
@@ -19,7 +19,7 @@ abstract class RepositoryModule {
     ): UserRepository
 
     @Binds
-    abstract fun bindPassengerRepository(
-        passengerRepository: DefaultPassengerRepository
-    ): PassengerRepository
+    abstract fun bindTodoRepository(
+        todoRepository: DefaultTodoRepository
+    ): TodoRepository
 }

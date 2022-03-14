@@ -1,16 +1,16 @@
 package com.seoplee.androidstudy.data.repository.user
 
-import androidx.room.Room
-import com.seoplee.androidstudy.MyApp.Companion.appContext
-import com.seoplee.androidstudy.data.entity.user.UserEntity
+import android.util.Log
+import com.seoplee.androidstudy.data.entity.user.User
 import com.seoplee.androidstudy.data.room.AppDataBase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class DefaultUserRepository @Inject constructor(private val db: AppDataBase) : UserRepository {
 
-    override fun insertUser(userEntity: UserEntity) {
-        db.UserDao().insertUserInfo(userEntity)
+    override fun insertUser(user: User) {
+        db.UserDao().insertUserInfo(user)
     }
 
     override fun checkPassword(userId: String, userPassword: String): Boolean {
@@ -27,4 +27,13 @@ class DefaultUserRepository @Inject constructor(private val db: AppDataBase) : U
 
         return false
     }
+
+    override fun getAllUsers() : Flow<List<User>>  {
+        return db.UserDao().getUsers()
+    }
+
+    override fun deleteUser(user: User): Boolean {
+        return true
+    }
+
 }

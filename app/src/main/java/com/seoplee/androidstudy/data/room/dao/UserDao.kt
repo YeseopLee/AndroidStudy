@@ -1,21 +1,27 @@
 package com.seoplee.androidstudy.data.room.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.seoplee.androidstudy.data.entity.user.UserEntity
+import androidx.room.*
+import com.seoplee.androidstudy.data.entity.user.User
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUserInfo(userEntity: UserEntity)
+    fun insertUserInfo(user: User)
 
-    @Query("SELECT userPassword FROM UserEntity WHERE userId = :userId")
+    @Delete
+    fun deleteUser(user: User)
+
+    @Query("SELECT userPassword FROM User WHERE userId = :userId")
     fun getPassword(userId: String): String
 
-    @Query("SELECT userId FROM UserEntity")
+    @Query("SELECT userId FROM User")
     fun getIds(): List<String>
+
+    @Query("SELECT * FROM User")
+    fun getUsers(): Flow<List<User>>
+
+
 
 }

@@ -7,6 +7,7 @@ import com.seoplee.androidstudy.MyApp
 import com.seoplee.androidstudy.data.network.ServerApi
 import com.seoplee.androidstudy.data.network.Url
 import com.seoplee.androidstudy.data.room.AppDataBase
+import com.seoplee.androidstudy.data.room.dao.TodoDao
 import com.seoplee.androidstudy.data.room.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -110,6 +111,10 @@ object AppModule{
     @Provides
     @Singleton
     fun provideUserDao(appDataBase: AppDataBase): UserDao = appDataBase.UserDao()
+
+    @Provides
+    @Singleton
+    fun provideTodoDao(appDataBase: AppDataBase): TodoDao = appDataBase.TodoDao()
 
     @Provides
     fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO

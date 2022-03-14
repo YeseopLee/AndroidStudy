@@ -1,14 +1,14 @@
 package com.seoplee.androidstudy.data.room
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.seoplee.androidstudy.data.entity.user.UserEntity
+import com.seoplee.androidstudy.data.entity.todo.Todo
+import com.seoplee.androidstudy.data.entity.user.User
+import com.seoplee.androidstudy.data.room.dao.TodoDao
 import com.seoplee.androidstudy.data.room.dao.UserDao
 
 @Database(
-    entities =[UserEntity::class],
+    entities =[User::class, Todo::class],
     version = 1,
     exportSchema = false
 )
@@ -19,4 +19,5 @@ abstract class AppDataBase: RoomDatabase() {
     }
 
     abstract fun UserDao(): UserDao
+    abstract fun TodoDao(): TodoDao
 }

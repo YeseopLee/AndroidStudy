@@ -1,13 +1,13 @@
 package com.seoplee.androidstudy.screen.login
 
-import com.seoplee.androidstudy.data.entity.user.UserEntity
+import com.seoplee.androidstudy.data.entity.user.User
 
 sealed class LoginState{
 
     object Uninitialized: LoginState()
 
     data class Success(
-        val userInfo: UserEntity
+        val userInfo: User
     ) : LoginState()
 
     object NoId : LoginState()

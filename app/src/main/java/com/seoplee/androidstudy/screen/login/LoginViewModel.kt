@@ -2,10 +2,8 @@ package com.seoplee.androidstudy.screen.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import com.seoplee.androidstudy.data.entity.user.UserEntity
-import com.seoplee.androidstudy.data.repository.user.DefaultUserRepository
+import com.seoplee.androidstudy.data.entity.user.User
 import com.seoplee.androidstudy.data.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -30,7 +28,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         if(checkInput()) {
             if(userRepository.checkId(userId.value!!)) loginState.value = LoginState.AlreadyExist
             else {
-                userRepository.insertUser(UserEntity(
+                userRepository.insertUser(User(
                     userId = userId.value!!,
                     userPassword = userPassword.value!!
                 ))
@@ -42,7 +40,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         if(checkInput()) {
             if(userRepository.checkPassword(userId.value!!, userPassword.value!!)) {
                 loginState.value = LoginState.Success(
-                    UserEntity(
+                    User(
                         userId = userId.value!!,
                         userPassword = userPassword.value!!
                     ))

@@ -10,8 +10,12 @@ import androidx.lifecycle.lifecycleScope
 import com.seoplee.androidstudy.R
 import com.seoplee.androidstudy.databinding.ActivityLoginBinding
 import com.seoplee.androidstudy.screen.main.MainActivity
+import com.seoplee.androidstudy.util.clicks
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,6 +35,11 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.suspendExample()
 
+        lifecycleScope.launch {
+            binding.loginButton.clicks()
+                .onEach { viewModel.signIn() }
+                .collect()
+        }
     }
 
     private fun observeData() {

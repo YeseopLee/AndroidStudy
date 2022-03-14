@@ -3,38 +3,54 @@ package com.seoplee.androidstudy.screen.main
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
-import com.seoplee.androidstudy.data.entity.NetworkResult
-import com.seoplee.androidstudy.data.entity.passenger.Data
-import com.seoplee.androidstudy.data.network.ServerApi
-import com.seoplee.androidstudy.data.repository.passenger.PassengerRepository
-import com.seoplee.androidstudy.util.SamplePagingSource
+import com.seoplee.androidstudy.data.entity.todo.Todo
+import com.seoplee.androidstudy.data.repository.todo.TodoRepository
+import com.seoplee.androidstudy.data.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val passengerRepository: PassengerRepository,
-private val serverApi: ServerApi) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val todoRepository: TodoRepository
+) : ViewModel() {
 
     val mainStateLiveData = MutableLiveData<MainState>(MainState.Uninitialized)
 
-    fun testCoroutine() = viewModelScope.launch {
-        val response = passengerRepository.getPassengers()
-
-        if(response.status == NetworkResult.Status.SUCCESS) {
-            mainStateLiveData.value = MainState.Success(
-                passengerInfo = response.data!!
-            )
-        } else {
-            mainStateLiveData.value = MainState.Error(response.code)
-        }
+    val todo: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
 
-    fun getPagingData() : Flow<PagingData<Data>> {
-        return passengerRepository.getPagingData().cachedIn(viewModelScope)
+    fun getAllTodos() = viewModelScope.launch {
+        mainStateLiveData.value = MainState.Loading
+
+        val response = todoRepository.getAllTodos()
+
+        mainStateLiveData.value = MainState.GetSuccess(response)
+    }
+
+    fun addTodo() = viewModelScope.launch {
+        mainStateLiveData.value = MainState.Loading
+
+        todo.value?.let {
+            todoRepository.insertTodo(Todo(description = it))
+            mainStateLiveData.value = MainState.AddSuccess
+        } ?: run {
+            mainStateLiveData.value = MainState.Error("에러")
+        }
+
+    }
+
+    fun deleteTodo(delTodo: Todo) = viewModelScope.launch {
+        mainStateLiveData.value = MainState.Loading
+
+        todoRepository.deleteTodo(delTodo)
+
+        mainStateLiveData.value = MainState.DeleteSuccess
     }
 
 }

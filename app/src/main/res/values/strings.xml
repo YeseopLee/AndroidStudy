@@ -12,4 +12,6 @@
     <string name="already">이미 존재하는 아이디 입니다.</string>
     <string name="pwError">존재하지 않는 아이디거나 비밀번호가 틀렸습니다.</string>
     <string name="welcome">환영합니다.</string>
+
+    <string name="add">추가</string>
 </resources>

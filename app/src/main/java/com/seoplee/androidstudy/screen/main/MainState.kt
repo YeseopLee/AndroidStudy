@@ -1,19 +1,25 @@
 package com.seoplee.androidstudy.screen.main
 
-import com.seoplee.androidstudy.data.entity.passenger.Data
-import com.seoplee.androidstudy.data.entity.passenger.Passenger
-import com.seoplee.androidstudy.data.entity.user.UserEntity
+import androidx.lifecycle.LiveData
+import com.seoplee.androidstudy.data.entity.todo.Todo
+import kotlinx.coroutines.flow.Flow
 
 sealed class MainState{
 
     object Uninitialized: MainState()
 
-    data class Success(
-        val passengerInfo: Passenger
+    object Loading: MainState()
+
+    data class GetSuccess(
+        val todoInfo: Flow<List<Todo>>
     ) : MainState()
 
+    object DeleteSuccess : MainState()
+
+    object AddSuccess : MainState()
+
     data class Error(
-        val code : String?
+        val message : String?
     ) : MainState()
 
 }
