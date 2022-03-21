@@ -8,7 +8,10 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.seoplee.androidstudy.R
 import com.seoplee.androidstudy.data.entity.todo.Todo
 import com.seoplee.androidstudy.databinding.ActivityMainBinding
@@ -49,16 +52,15 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            adapter.notifyDataSetChanged()
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.getAllTodos()
-    }
-
-    fun addTodo() {
-        viewModel.addTodo()
-        binding.todoEditText.text.clear()
+        viewModel.getAllTodosWithCollect()
+//        lifecycleScope.launch {
+//            viewModel.getAllTodosWithoutLifeCycle().collect {
+//                adapter.submitList(it)
+//            }
+//        }
     }
 
     fun deleteTodo(todo: Todo) {
@@ -66,14 +68,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeData()  {
-        viewModel.mainStateLiveData.observe(this) {
-            when(it) {
-                is MainState.Uninitialized -> handleElse()
-                is MainState.Loading -> handleLoading()
-                is MainState.GetSuccess -> handleSuccess(it)
-                is MainState.AddSuccess -> handleElse()
-                is MainState.DeleteSuccess -> handleElse()
-                is MainState.Error -> handleError(it)
+        lifecycleScope.launch {
+            viewModel.uiState.collect {
+                when(it) {
+                    is MainState.Uninitialized -> handleElse()
+                    is MainState.Loading -> handleLoading()
+                    is MainState.GetSuccess -> handleSuccess(it)
+                    is MainState.AddSuccess -> handleElse()
+                    is MainState.DeleteSuccess -> handleElse()
+                    is MainState.Error -> handleError(it)
+                }
             }
         }
     }
@@ -85,8 +89,10 @@ class MainActivity : AppCompatActivity() {
     private fun handleSuccess(state: MainState.GetSuccess) {
         binding.progressBar.visibility = View.GONE
         lifecycleScope.launch {
-            state.todoInfo.collect {
-                adapter.submitList(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                state.todoInfo.collect {
+                    adapter.submitList(it)
+                }
             }
         }
     }

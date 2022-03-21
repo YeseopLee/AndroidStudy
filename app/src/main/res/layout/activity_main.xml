@@ -9,10 +9,6 @@
             name="viewModel"
             type="com.seoplee.androidstudy.screen.main.MainViewModel" />
 
-        <variable
-            name="activity"
-            type="com.seoplee.androidstudy.screen.main.MainActivity" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

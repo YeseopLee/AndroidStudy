@@ -43,14 +43,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun observeData() {
-        viewModel.loginState.observe(this) {
-            when (it) {
-                is LoginState.NoId -> handleNoId()
-                is LoginState.NoPassword -> handleNoPassword()
-                is LoginState.AlreadyExist -> handleAlready()
-                is LoginState.PasswordError -> handlePasswordError()
-                is LoginState.Success -> handleSuccess(it)
-                else -> Unit
+        lifecycleScope.launch {
+            viewModel.loginState.collect {
+                when (it) {
+                    is LoginState.NoId -> handleNoId()
+                    is LoginState.NoPassword -> handleNoPassword()
+                    is LoginState.AlreadyExist -> handleAlready()
+                    is LoginState.PasswordError -> handlePasswordError()
+                    is LoginState.Success -> handleSuccess(it)
+                    else -> Unit
+                }
             }
         }
     }

@@ -1,16 +1,13 @@
 package com.seoplee.androidstudy.screen.main
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.seoplee.androidstudy.data.entity.todo.Todo
 import com.seoplee.androidstudy.data.repository.todo.TodoRepository
-import com.seoplee.androidstudy.data.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,38 +16,44 @@ class MainViewModel @Inject constructor(
     private val todoRepository: TodoRepository
 ) : ViewModel() {
 
-    val mainStateLiveData = MutableLiveData<MainState>(MainState.Uninitialized)
+    private val _uiState = MutableStateFlow<MainState>(MainState.Uninitialized)
+    val uiState : StateFlow<MainState> get() = _uiState
 
     val todo: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
-    fun getAllTodos() = viewModelScope.launch {
-        mainStateLiveData.value = MainState.Loading
+    // ui layer에서 repeatOnLifecycle을 이용하여 리소스 낭비 방지
+    fun getAllTodosWithCollect() = viewModelScope.launch {
+        _uiState.value = MainState.Loading
 
         val response = todoRepository.getAllTodos()
 
-        mainStateLiveData.value = MainState.GetSuccess(response)
+        _uiState.value = MainState.GetSuccess(response)
+    }
+
+    fun getAllTodosWithoutLifeCycle() : Flow<List<Todo>> {
+        return todoRepository.getAllTodos()
     }
 
     fun addTodo() = viewModelScope.launch {
-        mainStateLiveData.value = MainState.Loading
+        _uiState.value = MainState.Loading
 
         todo.value?.let {
             todoRepository.insertTodo(Todo(description = it))
-            mainStateLiveData.value = MainState.AddSuccess
+            _uiState.value = MainState.AddSuccess
         } ?: run {
-            mainStateLiveData.value = MainState.Error("에러")
+            _uiState.value = MainState.Error("에러")
         }
 
     }
 
     fun deleteTodo(delTodo: Todo) = viewModelScope.launch {
-        mainStateLiveData.value = MainState.Loading
+        _uiState.value = MainState.Loading
 
         todoRepository.deleteTodo(delTodo)
 
-        mainStateLiveData.value = MainState.DeleteSuccess
+        _uiState.value = MainState.DeleteSuccess
     }
 
 }
