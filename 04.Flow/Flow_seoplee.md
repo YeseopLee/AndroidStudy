@@ -388,3 +388,64 @@ doSomeThing()
 ```
 
 그러나 이 경우에는 별도의 scope를 이용하여 컬렉션을 하므로, doSomeThing()을 바로 실행할 수 있다.
+
+## Flow in Android (with Room)
+
+이번에는 배운 Flow를 안드로이드에서 어떤 식으로 사용할 수 있는지 알아본다.
+
+앞서 살펴본것 처럼 Flow는 비동기 데이터 스트림이기 때문에 Data Domain에서 사용하기에도 적합하고, 여러 방법을 통해 생명주기와 결합하여 마치 LiveData를 observing하던 것 처럼 사용할 수 있다.
+
+안드로이드에서는 내부 DB로 주로 사용되는 Room과 결합하여, 데이터가 갱신될 때 마다 매번 호출하지 않아도, 자동으로 데이터의 변화를 감지하여 ui에 뿌려주는 방법으로도 사용할 수 있다. (Room은 Rx, Flow등의 비동기 데이터 스트림을 지원한다.)
+
+```kotlin
+@Query("SELECT * FROM Todo")
+fun getTodos(): Flow<List<Todo>>
+```
+```kotlin
+fun getAllTodos(): Flow<List<Todo>> {
+    return db.TodoDao().getTodos()
+}
+```
+Room이 Flow를 지원하기 때문에 리턴타입을 Flow로 지정하여 비동기 스트림으로 데이터를 관리할 수 있다.
+
+```kotlin
+fun getAllTodos() : Flow<List<Todo>> {
+    return todoRepository.getAllTodos()
+}
+```
+in ViewModel
+
+```kotlin
+lifecycleScope.launch {
+    viewModel.getAllTodos().collect {
+        adapter.submitList(it)
+    }
+}
+```
+in View(Activity)
+
+위처럼 ui layer에서 Flow를 collect하여 emit되는 값들을 recyclerview adapter에 넣어줌으로, 데이터가 추가되거나 삭제돼도 별도의 호출 코드 없이 ui를 갱신할 수 있다.
+
+그러나 위 flow는 생명주기와 연결되어 있지 않아서 collect를 하지 않아도 될 때에도 계속 수집하고 있어 리소스 낭비가 일어난다.
+
+이 문제는 다음과 같은 방법들로 해결할 수 있다.
+
+1. asLiveData() 사용
+2. repeatOnLifecycle 사용
+
+asLiveData를 사용하여, Flow를 LiveData로 변환하여 기존처럼 사용할 수 있게 해준다.
+```kotlin
+val response = todoRepository.getAllTodos().asLiveData()
+```
+
+혹은 repeatOnLifecycle을 이용하여 flow에 생명주기를 연결시켜주는 방법이 있다.
+```kotlin
+lifecycleScope.launch {
+    repeatOnLifecycle(Lifecycle.State.STARTED){
+        viewModel.getAllTodos().collect {
+            adapter.submitList(it)
+        }
+    }
+}
+```
+
