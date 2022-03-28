@@ -572,6 +572,8 @@ lifecycleScope.launch {
 
 #### Reference
 https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-shared-flow/
+
 https://woochan-dev.tistory.com/87
+
 https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
 
