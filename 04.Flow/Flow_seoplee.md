@@ -455,8 +455,11 @@ lifecycleScope.launch {
 ![eventBus](https://user-images.githubusercontent.com/67935576/160365396-9e0943b4-5dd0-42dd-b8bb-7d619c04cd77.png)
 
 EventBus Pattern이란
+
 확장성이 뛰어난 반응형 앱을 구현하기 위한 분산 비동기 패턴을 말한다.
+
 어느 한 곳에서 이벤트를 발생시키면, 해당 이벤트들을 구독하는 다른곳에서 전부 대응하여 처리할 수 있게 된다.
+
 기존에는 greenrobot의 EventBus등 외부 라이브러리를 활용하는 경우가 많았으나, sharedFlow로 대체할 수 있게 되었다.
 
 ### EventBus 예제
