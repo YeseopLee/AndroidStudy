@@ -449,3 +449,129 @@ lifecycleScope.launch {
 }
 ```
 
+## Flow 03 - sharedFlow in Android (EventBus, TickHandler)
+
+### EventBus?
+![eventBus](https://user-images.githubusercontent.com/67935576/160365396-9e0943b4-5dd0-42dd-b8bb-7d619c04cd77.png)
+
+EventBus Pattern이란
+확장성이 뛰어난 반응형 앱을 구현하기 위한 분산 비동기 패턴을 말한다.
+어느 한 곳에서 이벤트를 발생시키면, 해당 이벤트들을 구독하는 다른곳에서 전부 대응하여 처리할 수 있게 된다.
+기존에는 greenrobot의 EventBus등 외부 라이브러리를 활용하는 경우가 많았으나, sharedFlow로 대체할 수 있게 되었다.
+
+### EventBus 예제
+
+```kotlin
+class EventBus {
+    private val _events = MutableSharedFlow<Int>()
+    val events : SharedFlow<Int> = _events.asSharedFlow()
+
+    suspend fun produceEvent() {
+        _events.emit(0)
+    }
+}
+```
+sharedFlow를 이용하여 eventBus를 생성한다.
+produceEvent는 flow에 데이터를 흘려보내 이벤트가 발생했음을 알려준다.
+
+이벤트의 발행/구독은 다음과 같이 사용하면 된다.
+
+```kotlin
+lifecycleScope.launch {
+    eventBus.produceEvent()
+}
+```
+lifeCycle을 이용하여 생명주기를 연결하여 이벤트를 발행한다.
+
+```kotlin
+viewModelScope.launch {
+    eventBus.events.collect {
+        doEvent() // 이벤트가 발생하면 실행할 로직 작성
+    }
+}
+```
+이벤트의 감지가 필요한 곳에서 위와같이 구독하여 사용하면 된다.
+
+```kotlin
+class EventBus {
+    private val events = MutableSharedFlow<Events>()
+
+    suspend fun produceEvent(event: Events) {
+        events.emit(event)
+    }
+
+    suspend fun subscribeEvent(event: Events, onEvent: () -> Unit) {
+        events.filter { it == event }.collect { onEvent() }
+    }
+}
+
+enum class Events {
+    UploadPostEvent,
+    LikeEvent
+}
+```
+enum class를 활용하여 Event들을 관리하여 쉽게 분기할 수 있다.
+이벤트를 방출시킬 produceEvent와 특정 이벤트를 구독할 subscribeEvent를 작성한다.
+
+```kotlin
+lifecycleScope.launch {
+    eventBus.produceEvent(Events.UploadPostEvent)
+}
+```
+위와같이 lifeCycle을 연결하여 특정 이벤트를 호출하고,
+
+```kotlin
+viewModelScope.launch {
+    eventBus.subscribeEvent(Events.UploadPostEvent) {
+        doEvent() // 이벤트가 발생하면 실행할 함수
+    }
+}
+```
+위처럼 특정 이벤트에 대한 구독을 진행하여 이벤트를 감지할 수 있다.
+
+### TickHandler
+
+외에도 네트워크등에서 최신 데이터등을 특정 주기(Tick)로 받아와야 할 때 sharedFlow를 활용할 수 있으며, 동작원리는 EventBus와 크게 다르지 않다.
+
+```kotlin
+class TickHandler {
+    private val tickIntervalMs: Long = 5000
+
+    private val _tickFlow = MutableSharedFlow<TickEvent>(replay = 0)
+    val tickFlow: SharedFlow<TickEvent> = _tickFlow.asSharedFlow()
+
+    suspend fun startProvideEvent() {
+        while(true) {
+            _tickFlow.emit(TickEvent.TickLoadData)
+            delay(tickIntervalMs)
+        }
+    }
+}
+
+enum class TickEvent{
+    TickLoadData
+}
+```
+5초마다 데이터를 발행하는 TickHandler 클래스를 작성한다.
+
+```kotlin
+lifecycleScope.launch {
+    tickHandler.startProvideEvent()
+}
+```
+원하는 시점에 데이터 방출을 시작한다.
+```kotlin
+lifecycleScope.launch {
+    tickHandler.tickFlow.collect {
+        doSomething // 최신 데이터 호출
+    }
+}
+```
+구독하면 5초 주기로 최신 데이터를 받아오는 로직을 수행한다.
+
+
+#### Reference
+https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-shared-flow/
+https://woochan-dev.tistory.com/87
+https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
+
